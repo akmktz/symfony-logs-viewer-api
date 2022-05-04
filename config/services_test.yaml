@@ -1,0 +1,5 @@
+services:
+  App\Service\LogFileApacheService:
+    public: true
+    arguments:
+      $path: 'test_log_files_path'
