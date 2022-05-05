@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-class LogFileApacheService implements LogServiceInterface
+class TestLogFileService implements LogServiceInterface
 {
     /**
      * @var string

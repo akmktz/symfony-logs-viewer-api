@@ -2,14 +2,14 @@
 
 namespace App\Unit\Tests;
 
-use App\Service\LogFileApacheService;
+use App\Service\TestLogFileService;
 use PHPUnit\Framework\TestCase;
 
-class LogFileApacheServiceTest extends TestCase
+class TestLogFileServiceTest extends TestCase
 {
     public function testGetLogsList(): void
     {
-        $logServiceMock = $this->getMockBuilder(LogFileApacheService::class)
+        $logServiceMock = $this->getMockBuilder(TestLogFileService::class)
             ->setConstructorArgs([
                 'path' => '/test_path/'
             ])
@@ -36,7 +36,7 @@ class LogFileApacheServiceTest extends TestCase
                 fn ($fileName) => !str_contains($fileName, 'directory')
             );
 
-        $this->assertInstanceOf(LogFileApacheService::class, $logServiceMock);
+        $this->assertInstanceOf(TestLogFileService::class, $logServiceMock);
 
         $this->assertEquals(
             $logServiceMock->getLogsList(),

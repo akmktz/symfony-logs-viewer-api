@@ -2,7 +2,7 @@
 
 namespace App\Feature\Tests;
 
-use App\Service\LogFileApacheService;
+use App\Service\TestLogFileService;
 use App\Tests\Feature\BaseTestCase;
 
 class LogsControllerTest extends BaseTestCase
@@ -17,12 +17,12 @@ class LogsControllerTest extends BaseTestCase
 
         $client = static::createClient();
 
-        $logServiceMock = $this->createPartialMock(LogFileApacheService::class, ['getLogsList']);
+        $logServiceMock = $this->createPartialMock(TestLogFileService::class, ['getLogsList']);
         $logServiceMock->expects($this->once())
             ->method('getLogsList')
             ->willReturn($data);
 
-        static::getContainer()->set(LogFileApacheService::class, $logServiceMock);
+        static::getContainer()->set(TestLogFileService::class, $logServiceMock);
 
         $url = $this->generateUrl('logs_list');
         $client->request('GET', $url);
