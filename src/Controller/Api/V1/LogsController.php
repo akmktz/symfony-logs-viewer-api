@@ -2,26 +2,57 @@
 
 namespace App\Controller\Api\V1;
 
+use App\Http\Criteria\RequestCriteria;
+use App\Service\LogCacheInterface;
 use App\Service\LogServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route(
- *     "/api/v1/logs", name="logs_")
+ * @Symfony\Component\Routing\Annotation\Route(
+ *     "/api/v1/logs",
+ *      name="logs_"
+ * )
  */
 class LogsController extends AbstractController
 {
-    /**
-     * @Route("", methods={"GET","HEAD"}, name="list")
-     */
-    public function index(LogServiceInterface $logService): Response
+    protected LogServiceInterface $logService;
+
+    public function __construct(LogServiceInterface $logService)
     {
-        $logsList = $logService->getLogsList();
+        $this->logService = $logService;
+    }
+
+    /**
+     * @Symfony\Component\Routing\Annotation\Route(
+     *     "",
+     *     methods={"GET","HEAD"},
+     *     name="list"
+     * )
+     */
+    public function index(): Response
+    {
+        $logsList = $this->logService->getLogsList();
 
         return $this->json($logsList);
     }
 
+    /**
+     * @Symfony\Component\Routing\Annotation\Route(
+     *     "/{logName}",
+     *     methods={"GET","HEAD"},
+     *     requirements={"logName"="[\w\-\.]+"},
+     *     name="show"
+     * )
+     */
+    public function show(string $logName, LogCacheInterface $cacheService, Request $request): Response
+    {
+        $dataIterator = $this->logService->getLogData($logName);
+        $cacheService->checkAndUpdate($logName, $dataIterator);
+        $requestCriteria = new RequestCriteria($request);
+        $result = $cacheService->getPaginatedLogItems($logName, $requestCriteria);
 
+        return $this->json($result);
+    }
 }

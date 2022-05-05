@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\TestLogFileGenerateService;
+use App\Service\TestLogFile\TestLogFileGenerateService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -33,7 +33,7 @@ class GenerateTestLogsCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('records-count', InputArgument::OPTIONAL, 'Argument description');
+        $this->addArgument('records-count', InputArgument::OPTIONAL, 'Number of lines for each log');
     }
 
     /**

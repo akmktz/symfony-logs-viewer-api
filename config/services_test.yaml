@@ -1,5 +1,7 @@
+parameters:
+  logs.path: '%kernel.project_dir%/tests/Files/'
 services:
-  App\Service\TestLogFileService:
+  App\Service\TestLogFile\TestLogFileService:
     public: true
     arguments:
-      $path: 'test_log_files_path'
+      $path: '%logs.path%'

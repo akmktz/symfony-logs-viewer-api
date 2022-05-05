@@ -2,12 +2,12 @@
 
 namespace App\Unit\Tests;
 
-use App\Service\TestLogFileService;
+use App\Service\TestLogFile\TestLogFileService;
 use PHPUnit\Framework\TestCase;
 
-class TestLogFileServiceTest extends TestCase
+class TestLogFileServiceMockTest extends TestCase
 {
-    public function testGetLogsList(): void
+    public function testMockGetLogsList(): void
     {
         $logServiceMock = $this->getMockBuilder(TestLogFileService::class)
             ->setConstructorArgs([
@@ -44,6 +44,30 @@ class TestLogFileServiceTest extends TestCase
                 'first_test_file.log',
                 'third_test_file.log',
             ]
+        );
+    }
+
+    public function testMockGetLogSize(): void
+    {
+        $logServiceMock = $this->getMockBuilder(TestLogFileService::class)
+            ->setConstructorArgs([
+                'path' => '/test_path/'
+            ])
+            ->onlyMethods([
+                'getFileSize',
+            ])
+            ->getMock();
+
+
+        $logServiceMock->expects($this->once())
+            ->method('getFileSize')
+            ->willReturn(12345);
+
+        $this->assertInstanceOf(TestLogFileService::class, $logServiceMock);
+
+        $this->assertEquals(
+            $logServiceMock->getLogSize('test.log'),
+            12345
         );
     }
 }
