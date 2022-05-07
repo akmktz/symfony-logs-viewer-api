@@ -2,7 +2,7 @@
 
 namespace App\Http\Criteria;
 
-use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\Request;
 
 class RequestCriteria implements RequestCriteriaInterface
@@ -15,18 +15,27 @@ class RequestCriteria implements RequestCriteriaInterface
     }
 
     /**
-     * @return Criteria
+     * @param QueryBuilder $query
      */
-    public function getCriteria(): Criteria
+    public function applyToQueryBuilder(QueryBuilder &$query): void
     {
-        $criteria = Criteria::create();
+        [$alias] = $query->getRootAliases();
 
         $search = $this->request->get('search');
-        if ($search) {
-            $criteria->andWhere(Criteria::expr()->contains('data', $search));
+        if (!$search) {
+            return;
+        }
+        $searchType = $this->request->get('search_type');
+
+        if ($searchType === 'regex') {
+            $query->andWhere('REGEXP(' . $alias . '.data, :regex) = true')
+                ->setParameter('regex', $search);
+
+            return;
         }
 
-        return $criteria;
+        $query->andWhere($alias . '.data LIKE :value')
+            ->setParameter('value', '%' . $search . '%');
     }
 
     /**
@@ -60,21 +69,20 @@ class RequestCriteria implements RequestCriteriaInterface
     }
 
     /**
-     * @param string $defaultField
-     * @param string $defaultOrder
-     * @return array
+     * @param string $default
+     * @return string
      */
-    public function getOrderBy(string $defaultField = '', string $defaultOrder = 'asc'): array
+    public function getSort(string $default = ''): string
     {
-        $sortField = $this->request->get('sort', $defaultField);
-        $sortOrder = $this->request->get('order', $defaultOrder);
+        return $this->request->get('sort', $default);
+    }
 
-        if (!$sortField) {
-            return [];
-        }
-
-        return [
-            $sortField => $sortOrder,
-        ];
+    /**
+     * @param string $default
+     * @return string
+     */
+    public function getOrder(string $default = ''): string
+    {
+        return $this->request->get('order', $default);
     }
 }

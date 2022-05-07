@@ -2,14 +2,14 @@
 
 namespace App\Http\Criteria;
 
-use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\QueryBuilder;
 
 interface RequestCriteriaInterface
 {
     /**
-     * @return Criteria
+     * @param QueryBuilder $query
      */
-    public function getCriteria(): Criteria;
+    public function applyToQueryBuilder(QueryBuilder &$query): void;
 
     /**
      * @param int $default
@@ -24,9 +24,14 @@ interface RequestCriteriaInterface
     public function getPerPage(int $default = 10): ?int;
 
     /**
-     * @param string $defaultField
-     * @param string $defaultOrder
-     * @return array
+     * @param string $default
+     * @return string
      */
-    public function getOrderBy(string $defaultField = '', string $defaultOrder = 'asc'): array;
+    public function getSort(string $default = ''): string;
+
+    /**
+     * @param string $default
+     * @return string
+     */
+    public function getOrder(string $default = ''): string;
 }

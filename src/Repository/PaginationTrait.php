@@ -2,42 +2,67 @@
 
 namespace App\Repository;
 
+use App\Http\Criteria\RequestCriteriaInterface;
 use Doctrine\Common\Collections\Criteria;
 
 trait PaginationTrait
 {
     /**
      * @param int $page
-     * @param int|null $perPage
+     * @param int $perPage
+     * @param string $sort
+     * @param string $order
      * @param Criteria|null $criteria
-     * @param array|null $orderBy
+     * @param RequestCriteriaInterface|null $requestCriteria
      * @return array
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\Query\QueryException
      */
-    public function paginate(int $page = 1, int $perPage = 10, array $orderBy = [], Criteria $criteria = null): array
+    public function paginate(
+        int $page = 1,
+        int $perPage = 10,
+        string $sort = '',
+        string $order = '',
+        Criteria $criteria = null,
+        RequestCriteriaInterface $requestCriteria = null
+    ): array
     {
-        if (!$criteria) {
-            $criteria = Criteria::create();
-        }
 
         $limit = $perPage;
         $offset = ($page - 1) * $perPage;
-        $total = (int)$this->createQueryBuilder('items')
-            ->select('count(items.id)')
-            ->addCriteria($criteria)
+
+        // Calculate total rows count
+        $query = $this->createQueryBuilder('items');
+        if ($criteria) {
+            $query->addCriteria($criteria);
+        }
+        if ($requestCriteria instanceof RequestCriteriaInterface) {
+            $requestCriteria->applyToQueryBuilder($query);
+        }
+        $total = (int)$query->select('count(items.id)')
             ->getQuery()
             ->getSingleScalarResult();
+
         $pagesCount = $total / $perPage;
         $pagesCount = (int)floor(fmod($pagesCount, 1) > 0 ? ($pagesCount + 1) : $pagesCount);
 
-        $criteria->setMaxResults($limit)
+        // Get data
+        $query = $this->createQueryBuilder('items');
+        if ($criteria) {
+            $query->addCriteria($criteria);
+        }
+        if ($requestCriteria instanceof RequestCriteriaInterface) {
+            $requestCriteria->applyToQueryBuilder($query);
+        }
+        $data = $query->select('items')
+            ->setMaxResults($limit)
             ->setFirstResult($offset)
-            ->orderBy($orderBy);
+            ->orderBy('items.' . $sort, $order)
+            ->getQuery()
+            ->getResult();
 
-        $data = $this->matching($criteria)
-            ->map(
-                fn ($item) => $this->convertEntityToArray($item)
-            )
-            ->toArray();
+        $data = array_map(fn ($item) => $this->convertEntityToArray($item), $data);
 
         $paginator = [
             'page' => $page,

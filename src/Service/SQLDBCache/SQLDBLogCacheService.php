@@ -49,12 +49,13 @@ class SQLDBLogCacheService implements LogCacheInterface
 
         $page = $requestCriteria->getPage();
         $perPage = $requestCriteria->getPerPage(10);
-        $orderBy = $requestCriteria->getOrderBy('id', 'desc');
+        $sort = $requestCriteria->getSort('id');
+        $order = $requestCriteria->getOrder('desc');
 
-        $criteria = $requestCriteria->getCriteria();
+        $criteria = Criteria::create();
         $criteria->andWhere(Criteria::expr()->eq('log_file_id', $log));
 
-        return $logItemsRepository->paginate($page, $perPage, $orderBy, $criteria);
+        return $logItemsRepository->paginate($page, $perPage, $sort, $order, $criteria, $requestCriteria);
     }
 
     public function checkAndUpdate(string $logName, LogIteratorInterface $iterator): void
