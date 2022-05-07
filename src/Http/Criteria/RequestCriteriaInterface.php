@@ -2,12 +2,14 @@
 
 namespace App\Http\Criteria;
 
+use Doctrine\Common\Collections\Criteria;
+
 interface RequestCriteriaInterface
 {
     /**
-     * @return array
+     * @return Criteria
      */
-    public function getCriteria(): array;
+    public function getCriteria(): Criteria;
 
     /**
      * @param int $default
@@ -20,4 +22,11 @@ interface RequestCriteriaInterface
      * @return int|null
      */
     public function getPerPage(int $default = 10): ?int;
+
+    /**
+     * @param string $defaultField
+     * @param string $defaultOrder
+     * @return array
+     */
+    public function getOrderBy(string $defaultField = '', string $defaultOrder = 'asc'): array;
 }

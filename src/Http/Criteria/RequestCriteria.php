@@ -2,6 +2,7 @@
 
 namespace App\Http\Criteria;
 
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Component\HttpFoundation\Request;
 
 class RequestCriteria implements RequestCriteriaInterface
@@ -14,11 +15,16 @@ class RequestCriteria implements RequestCriteriaInterface
     }
 
     /**
-     * @return array
+     * @return Criteria
      */
-    public function getCriteria(): array
+    public function getCriteria(): Criteria
     {
-        $criteria = [];
+        $criteria = Criteria::create();
+
+        $search = $this->request->get('search');
+        if ($search) {
+            $criteria->andWhere(Criteria::expr()->contains('data', $search));
+        }
 
         return $criteria;
     }
@@ -51,5 +57,24 @@ class RequestCriteria implements RequestCriteriaInterface
         }
 
         return $page;
+    }
+
+    /**
+     * @param string $defaultField
+     * @param string $defaultOrder
+     * @return array
+     */
+    public function getOrderBy(string $defaultField = '', string $defaultOrder = 'asc'): array
+    {
+        $sortField = $this->request->get('sort', $defaultField);
+        $sortOrder = $this->request->get('order', $defaultOrder);
+
+        if (!$sortField) {
+            return [];
+        }
+
+        return [
+            $sortField => $sortOrder,
+        ];
     }
 }

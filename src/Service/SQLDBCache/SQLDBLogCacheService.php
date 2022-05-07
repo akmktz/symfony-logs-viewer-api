@@ -8,6 +8,7 @@ use App\Manager\LogFileItemManager;
 use App\Manager\LogFileManager;
 use App\Service\LogCacheInterface;
 use App\Service\LogIteratorInterface;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SQLDBLogCacheService implements LogCacheInterface
@@ -48,15 +49,12 @@ class SQLDBLogCacheService implements LogCacheInterface
 
         $page = $requestCriteria->getPage();
         $perPage = $requestCriteria->getPerPage(10);
+        $orderBy = $requestCriteria->getOrderBy('id', 'desc');
 
         $criteria = $requestCriteria->getCriteria();
-        $criteria['log_file_id'] = $log->getId();
+        $criteria->andWhere(Criteria::expr()->eq('log_file_id', $log));
 
-        $orderBy = [
-            'id' => 'desc'
-        ];
-
-        return $logItemsRepository->paginate($page, $perPage, $criteria, $orderBy);
+        return $logItemsRepository->paginate($page, $perPage, $orderBy, $criteria);
     }
 
     public function checkAndUpdate(string $logName, LogIteratorInterface $iterator): void

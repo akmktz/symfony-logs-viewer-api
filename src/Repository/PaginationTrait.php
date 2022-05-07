@@ -2,27 +2,42 @@
 
 namespace App\Repository;
 
+use Doctrine\Common\Collections\Criteria;
+
 trait PaginationTrait
 {
     /**
      * @param int $page
      * @param int|null $perPage
-     * @param array $criteria
+     * @param Criteria|null $criteria
      * @param array|null $orderBy
      * @return array
      */
-    public function paginate(int $page = 1, ?int $perPage = 10, array $criteria = [], ?array $orderBy = null): array
+    public function paginate(int $page = 1, int $perPage = 10, array $orderBy = [], Criteria $criteria = null): array
     {
+        if (!$criteria) {
+            $criteria = Criteria::create();
+        }
+
         $limit = $perPage;
         $offset = ($page - 1) * $perPage;
-        $total = $this->count($criteria);
+        $total = (int)$this->createQueryBuilder('items')
+            ->select('count(items.id)')
+            ->addCriteria($criteria)
+            ->getQuery()
+            ->getSingleScalarResult();
         $pagesCount = $total / $perPage;
-        $pagesCount = floor(fmod($pagesCount, 1) > 0 ? ($pagesCount + 1) : $pagesCount);
+        $pagesCount = (int)floor(fmod($pagesCount, 1) > 0 ? ($pagesCount + 1) : $pagesCount);
 
-        $data = array_map(
-            fn ($item) => $this->convertEntityToArray($item),
-            $this->findBy($criteria, $orderBy, $limit, $offset)
-        );
+        $criteria->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->orderBy($orderBy);
+
+        $data = $this->matching($criteria)
+            ->map(
+                fn ($item) => $this->convertEntityToArray($item)
+            )
+            ->toArray();
 
         $paginator = [
             'page' => $page,
