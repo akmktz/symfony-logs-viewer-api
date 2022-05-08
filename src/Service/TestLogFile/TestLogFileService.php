@@ -44,6 +44,15 @@ class TestLogFileService implements LogServiceInterface
 
     /**
      * @param string $logName
+     * @return bool
+     */
+    public function checkLogExists(string $logName): bool
+    {
+        return $this->checkFileExists($this->path . $logName);
+    }
+
+    /**
+     * @param string $logName
      * @return int|null
      */
     public function getLogSize(string $logName): ?int
@@ -75,6 +84,15 @@ class TestLogFileService implements LogServiceInterface
     protected function getFilesList(string $path): array
     {
         return glob($path);
+    }
+
+    /**
+     * @param string $fileName
+     * @return bool
+     */
+    protected function checkFileExists(string $fileName): bool
+    {
+        return file_exists($fileName);
     }
 
     /**

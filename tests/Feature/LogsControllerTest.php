@@ -46,4 +46,15 @@ class LogsControllerTest extends BaseTestCase
             ],
         ]);
     }
+
+    public function testShow404(): void
+    {
+        $client = static::createClient();
+
+        $url = $this->generateUrl('logs_show', ['logName' => 'non_existent_file.log']);
+        $client->request('GET', $url);
+
+        $this->assertResponseStatusCodeSame(404);
+        $this->assertJsonEquals(['error' => 'Log file not found']);
+    }
 }

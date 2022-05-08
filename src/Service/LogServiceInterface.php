@@ -11,6 +11,12 @@ interface LogServiceInterface
 
     /**
      * @param string $logName
+     * @return bool
+     */
+    public function checkLogExists(string $logName): bool;
+
+    /**
+     * @param string $logName
      * @return int|null
      */
     public function getLogSize(string $logName): ?int;
