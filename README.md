@@ -34,3 +34,35 @@ to /tmp/logs:
 ```
 php bin/console generate:logs 1000
 ```
+
+
+###Connect to API:
+Logs list
+```
+http://localhost:8088/api/v1/logs
+```
+
+Show log items
+```
+http://localhost:8088/api/v1/logs/<logfile name>
+```
+
+Pagination
+```
+http://localhost:8088/api/v1/logs/test1.log?page=1&per_page=50
+```
+
+Sorting
+```
+http://localhost:8088/api/v1/logs/test1.log?sort=date_time&order=desc
+```
+
+Search
+```
+http://localhost:8088/api/v1/logs/test1.log?search=zzz
+```
+
+Search by regular expression
+```
+http://localhost:8088/api/v1/logs/test1.log?search_type=regex&search=\w{5}://\w{3}\.
+```
