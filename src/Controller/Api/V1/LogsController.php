@@ -48,7 +48,14 @@ class LogsController extends AbstractController
      */
     public function show(string $logName, LogCacheInterface $cacheService, Request $request): Response
     {
-        $dataIterator = $this->logService->getLogData($logName);
+        try {
+            $dataIterator = $this->logService->getLogData($logName);
+        } catch (\Throwable $throwable) {
+            return $this->json([
+                'error' => 'Log file not found'
+            ], 404);
+        }
+
         $cacheService->checkAndUpdate($logName, $dataIterator);
         $requestCriteria = new RequestCriteria($request);
         $result = $cacheService->getPaginatedLogItems($logName, $requestCriteria);
