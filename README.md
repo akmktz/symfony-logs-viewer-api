@@ -81,6 +81,7 @@ http://localhost:8088/api/v1/logs/main_test.log?from[]=2022-05-05T00:00:00&from[
 http://localhost:8088/api/v1/logs/main_test.log?from[]=2022-05-05T00:00:00&from[]=2022-05-07T00:00:00&to[]=2022-05-05T23:59:59&to[]=2022-05-07T23:59:59&search_type[]=string&search_type[]=regex&search[]=zzz&search[]=X{4,}
 ```
 
+_Import posman collection from file_ ```Symfony-logs-viewer.postman_collection.json```
 
 ###Database
 Database schema in file `DATABASE_SCHEMA.jpg`

@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "a7955e81-b023-4c90-9a78-aa76292f9f39",
+		"name": "Symfony-logs-viewer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Logs",
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/logs",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"logs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show - Paginate",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/logs/main_test.log?page=1&per_page=50",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"logs",
+								"main_test.log"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "50"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show - Sort",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/logs/main_test.log?sort=date_time&order=desc",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"logs",
+								"main_test.log"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "date_time"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show - Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/logs/main_test.log?search=z",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"logs",
+								"main_test.log"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "z"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show - Match",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/logs/main_test.log?search_type=regex&search=\\w{5}://\\w{3}\\.",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"logs",
+								"main_test.log"
+							],
+							"query": [
+								{
+									"key": "search_type",
+									"value": "regex"
+								},
+								{
+									"key": "search",
+									"value": "\\w{5}://\\w{3}\\."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show - Period",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/logs/main_test.log?fr1om=2022-05-01T16:05:26&to=2022-05-05T16:05:26",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"logs",
+								"main_test.log"
+							],
+							"query": [
+								{
+									"key": "fr1om",
+									"value": "2022-05-01T16:05:26"
+								},
+								{
+									"key": "to",
+									"value": "2022-05-05T16:05:26"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show - MultiSearch",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/logs/main_test.log?search[]=ZZZZ&search[]=X{4,}&search_type[]=string&search_type[]=regex",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"logs",
+								"main_test.log"
+							],
+							"query": [
+								{
+									"key": "search[]",
+									"value": "ZZZZ"
+								},
+								{
+									"key": "search[]",
+									"value": "X{4,}"
+								},
+								{
+									"key": "search_type[]",
+									"value": "string"
+								},
+								{
+									"key": "search_type[]",
+									"value": "regex"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show - MultiPeriod",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/logs/main_test.log?from[]=2022-05-05T00:00:00&from[]=2022-05-07T00:00:00&to[]=2022-05-05T23:59:59&to[]=2022-05-07T23:59:59",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"logs",
+								"main_test.log"
+							],
+							"query": [
+								{
+									"key": "from[]",
+									"value": "2022-05-05T00:00:00"
+								},
+								{
+									"key": "from[]",
+									"value": "2022-05-07T00:00:00"
+								},
+								{
+									"key": "to[]",
+									"value": "2022-05-05T23:59:59"
+								},
+								{
+									"key": "to[]",
+									"value": "2022-05-07T23:59:59"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api_url",
+			"value": "http://localhost:8088/api/v1"
+		}
+	]
+}
