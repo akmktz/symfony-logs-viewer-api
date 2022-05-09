@@ -1,4 +1,5 @@
-##INSTALL
+INSTALL
+---------------
 Install packages:
 ```
 composer install
@@ -23,20 +24,23 @@ php bin/console doctrine:migrations:migrate -n --env=test
 ```
 
 
-##Run tests:
+Run tests:
+---------------
 ```
 php bin/phpunit
 ```
 
 
-##Generate test logs
+Generate test logs
+---------------
 to /tmp/logs:
 ```
 php bin/console generate:logs 1000
 ```
 
 
-##Connect to API:
+Connect to API:
+---------------
 Logs list
 ```
 http://localhost:8088/api/v1/logs
@@ -83,7 +87,8 @@ http://localhost:8088/api/v1/logs/main_test.log?from[]=2022-05-05T00:00:00&from[
 
 _Import posman collection from file_ ```Symfony-logs-viewer.postman_collection.json```
 
-##Database
+Database
+---------------
 Database schema in file `DATABASE_SCHEMA.jpg`
 
 _I chose MySQL because I know it well. Other databases would also work, but I didn't have time to explore them._
