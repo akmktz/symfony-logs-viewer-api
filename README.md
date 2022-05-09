@@ -49,22 +49,36 @@ http://localhost:8088/api/v1/logs/<logfile name>
 
 Pagination
 ```
-http://localhost:8088/api/v1/logs/test1.log?page=1&per_page=50
+http://localhost:8088/api/v1/logs/main_test.log?page=1&per_page=50
 ```
 
 Sorting
 ```
-http://localhost:8088/api/v1/logs/test1.log?sort=date_time&order=desc
+http://localhost:8088/api/v1/logs/main_test.log?sort=date_time&order=desc
 ```
 
 Search
 ```
-http://localhost:8088/api/v1/logs/test1.log?search=zzz
+http://localhost:8088/api/v1/logs/main_test.log?search=zzz
 ```
 
 Search by regular expression
 ```
-http://localhost:8088/api/v1/logs/test1.log?search_type=regex&search=\w{5}://\w{3}\.
+http://localhost:8088/api/v1/logs/main_test.log?search_type=regex&search=\w{5}://\w{3}\.
+```
+
+Period
+```
+http://localhost:8088/api/v1/logs/main_test.log?from[]=2022-05-05T00:00:00&from[]=2022-05-07T00:00:00&to[]=2022-05-05T23:59:59&to[]=2022-05-07T23:59:59
+```
+
+Multiquery
+```
+http://localhost:8088/api/v1/logs/main_test.log?search_type[]=string&search_type[]=regex&search[]=zzz&search[]=\w{5}://\w{3}\.
+
+http://localhost:8088/api/v1/logs/main_test.log?from[]=2022-05-05T00:00:00&from[]=2022-05-07T00:00:00&to[]=2022-05-05T23:59:59&to[]=2022-05-07T23:59:59
+
+http://localhost:8088/api/v1/logs/main_test.log?from[]=2022-05-05T00:00:00&from[]=2022-05-07T00:00:00&to[]=2022-05-05T23:59:59&to[]=2022-05-07T23:59:59&search_type[]=string&search_type[]=regex&search[]=zzz&search[]=X{4,}
 ```
 
 

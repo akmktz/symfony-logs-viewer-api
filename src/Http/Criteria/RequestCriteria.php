@@ -79,21 +79,28 @@ class RequestCriteria implements RequestCriteriaInterface
     {
         [$alias] = $query->getRootAliases();
 
-        $search = $this->request->get('search');
-        if (!$search) {
+        if (!$this->request->get('search')) {
+            return;
+        }
+        $searchStringList = (array)$this->request->get('search');
+        if (empty($searchStringList)) {
             return;
         }
 
-        $searchType = $this->request->get('search_type');
-        if ($searchType === 'regex') {
-            $query->andWhere('REGEXP(' . $alias . '.data, :regex) = true')
-                ->setParameter('regex', $search);
-
-            return;
+        $searchTypesList = (array)$this->request->get('search_type');
+        $where = $query->expr()->orX();
+        foreach ($searchStringList as $searchIndex => $searchString) {
+            $searchType = $this->arrayGet($searchTypesList, $searchIndex);
+            if ($searchType === 'regex') {
+                $where->add("REGEXP({$alias}.data, :regex{$searchIndex}) = true");
+                $query->setParameter("regex{$searchIndex}", $searchString);
+            } else {
+                $where->add("{$alias}.data LIKE :searchString{$searchIndex}");
+                $query->setParameter("searchString{$searchIndex}", "%{$searchString}%");
+            }
         }
 
-        $query->andWhere($alias . '.data LIKE :value')
-            ->setParameter('value', '%' . $search . '%');
+        $query->andWhere($where);
     }
 
     /**
@@ -103,19 +110,43 @@ class RequestCriteria implements RequestCriteriaInterface
     {
         [$alias] = $query->getRootAliases();
 
-        if ($this->request->get('from')) {
-            $periodStart = Carbon::parse($this->request->get('from'));
-
-            $query->andWhere($alias . '.date_time >= :periodStart')
-                ->setParameter('periodStart', $periodStart);
+        if (!$this->request->get('from') && !$this->request->get('to')) {
+            return;
         }
 
-        if ($this->request->get('to')) {
-            $periodEnd = Carbon::parse($this->request->get('to'));
-
-            $query->andWhere($alias . '.date_time <= :periodEnd')
-                ->setParameter('periodEnd', $periodEnd);
+        $periodStartList = (array)$this->request->get('from');
+        $periodEndList = (array)$this->request->get('to');
+        $periodCount = max(count($periodStartList), count($periodEndList));
+        $where = $query->expr()->orX();
+        for ($periodIndex = 0; $periodIndex < $periodCount; $periodIndex++) {
+            $periodStart = $this->arrayGet($periodStartList, $periodIndex);
+            $subWhere = $query->expr()->andX();
+            if ($periodStart) {
+                $subWhere->add("{$alias}.date_time >= :periodStart{$periodIndex}");
+                $query->setParameter("periodStart{$periodIndex}", Carbon::parse($periodStart));
+            }
+            $periodEnd = $this->arrayGet($periodEndList, $periodIndex);
+            if ($periodEnd) {
+                $subWhere->add("{$alias}.date_time <= :periodEnd{$periodIndex}");
+                $query->setParameter("periodEnd{$periodIndex}", Carbon::parse($periodEnd));
+            }
+            $where->add($subWhere);
         }
+        $query->andWhere($where);
     }
 
+    /**
+     * @param array $array
+     * @param int|string $key
+     * @param null $default
+     * @return mixed
+     */
+    protected function arrayGet(array $array, int|string $key, $default = null): mixed
+    {
+        if (!array_key_exists($key, $array)) {
+            return $default;
+        }
+
+        return $array[$key];
+    }
 }
