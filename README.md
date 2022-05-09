@@ -66,3 +66,9 @@ Search by regular expression
 ```
 http://localhost:8088/api/v1/logs/test1.log?search_type=regex&search=\w{5}://\w{3}\.
 ```
+
+
+###Database
+Database schema in file `DATABASE_SCHEMA.jpg`
+
+_I chose MySQL because I know it well. Other databases would also work, but I didn't have time to explore them._
