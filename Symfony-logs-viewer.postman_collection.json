@@ -139,7 +139,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_url}}/logs/main_test.log?fr1om=2022-05-01T16:05:26&to=2022-05-05T16:05:26",
+							"raw": "{{api_url}}/logs/main_test.log?from=2022-05-01T16:05:26&to=2022-05-05T16:05:26",
 							"host": [
 								"{{api_url}}"
 							],
@@ -149,7 +149,7 @@
 							],
 							"query": [
 								{
-									"key": "fr1om",
+									"key": "from",
 									"value": "2022-05-01T16:05:26"
 								},
 								{
