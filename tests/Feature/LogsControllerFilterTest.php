@@ -66,4 +66,32 @@ class LogsControllerFilterTest extends BaseTestCase
             ],
         ]);
     }
+
+    public function testShowFilterPeriod(): void
+    {
+        $client = static::createClient();
+
+        $url = $this->generateUrl('logs_show', [
+            'logName' => 'first_test_file.log',
+            'from' => '2022-04-25T19:05:27',
+            'to' => '2022-04-25T19:05:27',
+        ]);
+        $client->request('GET', $url);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonEquals([
+            'data' => [
+                [
+                    'date_time' => '2022-04-25T19:05:27.000000Z',
+                    'data' => '2022-04-25 19:05:27 "GET https://test.com/test2.html HTTP/1.1"',
+                ],
+            ],
+            'paginator' => [
+                'page' => 1,
+                'per_page' => 10,
+                'total_items' => 1,
+                'total_pages' => 1,
+            ],
+        ]);
+    }
 }

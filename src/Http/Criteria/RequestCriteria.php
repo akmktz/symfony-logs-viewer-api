@@ -2,6 +2,7 @@
 
 namespace App\Http\Criteria;
 
+use Carbon\Carbon;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -12,30 +13,6 @@ class RequestCriteria implements RequestCriteriaInterface
     public function __construct(Request $request)
     {
         $this->request = $request;
-    }
-
-    /**
-     * @param QueryBuilder $query
-     */
-    public function applyToQueryBuilder(QueryBuilder &$query): void
-    {
-        [$alias] = $query->getRootAliases();
-
-        $search = $this->request->get('search');
-        if (!$search) {
-            return;
-        }
-        $searchType = $this->request->get('search_type');
-
-        if ($searchType === 'regex') {
-            $query->andWhere('REGEXP(' . $alias . '.data, :regex) = true')
-                ->setParameter('regex', $search);
-
-            return;
-        }
-
-        $query->andWhere($alias . '.data LIKE :value')
-            ->setParameter('value', '%' . $search . '%');
     }
 
     /**
@@ -85,4 +62,60 @@ class RequestCriteria implements RequestCriteriaInterface
     {
         return $this->request->get('order', $default);
     }
+
+    /**
+     * @param QueryBuilder $query
+     */
+    public function applyToQueryBuilder(QueryBuilder &$query): void
+    {
+        $this->applySearchToQueryBuilder($query);
+        $this->applyPeriodToQueryBuilder($query);
+    }
+
+    /**
+     * @param QueryBuilder $query
+     */
+    protected function applySearchToQueryBuilder(QueryBuilder &$query): void
+    {
+        [$alias] = $query->getRootAliases();
+
+        $search = $this->request->get('search');
+        if (!$search) {
+            return;
+        }
+
+        $searchType = $this->request->get('search_type');
+        if ($searchType === 'regex') {
+            $query->andWhere('REGEXP(' . $alias . '.data, :regex) = true')
+                ->setParameter('regex', $search);
+
+            return;
+        }
+
+        $query->andWhere($alias . '.data LIKE :value')
+            ->setParameter('value', '%' . $search . '%');
+    }
+
+    /**
+     * @param QueryBuilder $query
+     */
+    protected function applyPeriodToQueryBuilder(QueryBuilder &$query): void
+    {
+        [$alias] = $query->getRootAliases();
+
+        if ($this->request->get('from')) {
+            $periodStart = Carbon::parse($this->request->get('from'));
+
+            $query->andWhere($alias . '.date_time >= :periodStart')
+                ->setParameter('periodStart', $periodStart);
+        }
+
+        if ($this->request->get('to')) {
+            $periodEnd = Carbon::parse($this->request->get('to'));
+
+            $query->andWhere($alias . '.date_time <= :periodEnd')
+                ->setParameter('periodEnd', $periodEnd);
+        }
+    }
+
 }
